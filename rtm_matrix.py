@@ -74,7 +74,7 @@ class rtm():
     def fetch_tasks(self):
         try:
             params = dict()
-            params['filter'] = 'status:incomplete AND dueBefore:"1 month of today"'
+            params['filter'] = 'status:incomplete AND dueBefore:"3 days of today"'
 
             raw_tasks = self._request('rtm.tasks.getList', params)
 
@@ -103,13 +103,12 @@ class rtm():
                             else:
                                 status = FUTURE
 
-                            if status != FUTURE:
-                                task_item = dict()
-                                task_item['due'] = local_date.strftime("%Y-%m-%d")
-                                task_item['status'] = status
-                                task_item['recurring'] = recurring
+                            task_item = dict()
+                            task_item['due'] = local_date.strftime("%Y-%m-%d")
+                            task_item['status'] = status
+                            task_item['recurring'] = recurring
 
-                                task_list.append(task_item)
+                            task_list.append(task_item)
 
                 self.tasks = sorted(task_list, key=itemgetter('due'))
             self.processing_error = False
@@ -136,11 +135,11 @@ if __name__ == "__main__":
         points = list()
 
         for task in instance.get_tasks():
-            if task['recurring']:
-                points.append(YELLOW)
-            elif task['status'] == OVERDUE:
+            if task['status'] == OVERDUE:
                 points.append(RED)
             elif task['status'] == TODAY:
+                points.append(YELLOW)
+            else:
                 points.append(GREEN)
             
         print(points)
