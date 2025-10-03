@@ -1,10 +1,15 @@
+Adafruit-PureIO==1.1.11
+Adafruit_GPIO==1.0.3
+Adafruit_LED_Backpack==1.8.1
 certifi==2025.8.3
 charset-normalizer==3.4.3
 idna==3.10
+pillow==11.3.0
 python-dateutil==2.9.0.post0
 pytz==2025.2
 requests==2.32.5
 six==1.17.0
+spidev==3.8
 toml==0.10.2
 tzlocal==5.3.1
 urllib3==2.5.0
