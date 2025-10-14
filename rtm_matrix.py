@@ -13,7 +13,7 @@ from tzlocal import get_localzone
 import logging
 from operator import itemgetter
 from Adafruit_LED_Backpack import BicolorMatrix8x8
-import time
+import math
 
 RTM_URL = 'https://api.rememberthemilk.com/services/rest/?'
 RATE_LIMIT = 1
@@ -158,22 +158,36 @@ def get_col(number):
     return 7 - number % 8
 
 def display_simple_tasks(matrix, overdue, today, future):
-    current_pos = 0
+    current_pos = -1
     for i in range(overdue):
+        current_pos += 1
         matrix.set_pixel(get_row(current_pos), get_col(current_pos), BicolorMatrix8x8.RED)
+
+    # Fast forward to next row
+    while (current_pos + 1) % 8 > 0:
         current_pos += 1
 
-    for i in range(current_pos, overdue + today):
+    for i in range(today):
+        current_pos += 1
         matrix.set_pixel(get_row(current_pos), get_col(current_pos), BicolorMatrix8x8.YELLOW)
+
+    # Fast forward to next row
+    while (current_pos + 1) % 8 > 0:
         current_pos += 1
 
-    for i in range(current_pos, overdue + today + future):
+    for i in range(future):
+        current_pos += 1
         matrix.set_pixel(get_row(current_pos), get_col(current_pos), BicolorMatrix8x8.GREEN)
-        current_pos += 1
 
+def calc_line_count(count):
+    return math.ceil(count / 8)
 
 def display_tasks(matrix, overdue, today, future):
-    if overdue + today + future > 64:
+    overdue_lines = calc_line_count(overdue)
+    today_lines = calc_line_count(today)
+    future_lines = calc_line_count(future)
+
+    if overdue_lines + today_lines + future_lines > 8:
         display_binary_tasks(matrix, overdue, 7, BicolorMatrix8x8.RED)
         display_binary_tasks(matrix, today, 4, BicolorMatrix8x8.YELLOW)
         display_binary_tasks(matrix, future, 1, BicolorMatrix8x8.GREEN)
