@@ -8,9 +8,11 @@ address=116
 i2c_bus=1
 brightness=5
 
-[space]
+[counter]
 address=112
 i2c_bus=1
 brightness=5
-path='/'
-
+space_path='/'
+media_url = ''
+sizes_host=''
+sizes_port=0

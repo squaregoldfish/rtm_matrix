@@ -233,4 +233,7 @@ if __name__ == "__main__":
             display_tasks(matrix, overdue, today, future)
 
         matrix.write_display()
+        with open('task_count.txt', 'w') as count_file:
+            count_file.write(f'{overdue + today + future}')
+
         time.sleep(60)

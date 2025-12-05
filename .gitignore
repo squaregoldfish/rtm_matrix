@@ -208,3 +208,7 @@ __marimo__/
 
 # Config
 config.toml
+
+# Data files
+task_count.txt
+
