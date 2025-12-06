@@ -35,7 +35,7 @@ def space(path, dest):
 
         time.sleep(5)
 
-def file_source(file, dest):
+def int_file_source(file, dest):
     while True:
         file_result = None
 
@@ -44,7 +44,7 @@ def file_source(file, dest):
                 with open(file) as f:
                     file_result = f.read().strip()
 
-            counter_data[dest] = file_result
+            counter_data[dest] = int(file_result)
         except:
             pass
 
@@ -107,7 +107,7 @@ def main():
     bagpuss = threading.Thread(target=space, args=(config['space_path'], 'B'))
     bagpuss.start()
 
-    tasks = threading.Thread(target=file_source, args=('task_count.txt', 'T'))
+    tasks = threading.Thread(target=int_file_source, args=('task_count.txt', 'T'))
     tasks.start()
 
     media_extract = {
