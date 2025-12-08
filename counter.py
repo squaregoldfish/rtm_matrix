@@ -11,6 +11,7 @@ import socket
 
 counter_data = dict()
 counter_data['T'] = None
+counter_data['R'] = None
 counter_data['S'] = None
 counter_data['P'] = None
 counter_data['V'] = None
@@ -98,6 +99,22 @@ def json_url_source(url, extract):
 
         time.sleep(300)
 
+def int_url_source(url, dest):
+    while True:
+        result = None
+
+        try:
+            response = requests.get(url)
+            response.raise_for_status()
+            result = int(response.text)
+        except:
+            pass
+
+        with lock:
+            counter_data[dest] = result
+
+        time.sleep(60)
+
 def main():
     # Config
     with open('config.toml') as config_file:
@@ -109,6 +126,9 @@ def main():
 
     tasks = threading.Thread(target=int_file_source, args=('task_count.txt', 'T'))
     tasks.start()
+
+    freshrss = threading.Thread(target=int_url_source, args=(config['freshrss_url'], 'R'))
+    freshrss.start()
 
     media_extract = {
         'P': ['frames', 0, 'text'],
