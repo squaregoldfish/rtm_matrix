@@ -149,7 +149,7 @@ def main():
                 text = f'{key}{value}'
 
             display.print(text)
-            time.sleep(5)
+            time.sleep(3)
 
 
 
