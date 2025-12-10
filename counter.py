@@ -10,6 +10,7 @@ import re
 import socket
 
 counter_data = dict()
+counter_data['W'] = None
 counter_data['T'] = None
 counter_data['R'] = None
 counter_data['S'] = None
@@ -50,6 +51,24 @@ def int_file_source(file, dest):
             pass
 
         time.sleep(5)
+
+def file_source(file, trim, dest):
+    while True:
+        file_result = None
+
+        try:
+            if os.path.exists(file):
+                with open(file) as f:
+                    file_result = f.readline().strip()
+                    if trim > 0:
+                        file_result = file_result[:(trim * -1)]
+        except:
+            pass
+
+        with lock:
+            counter_data[dest] = file_result
+
+        time.sleep(300)
 
 def number_server(host, port, dest):
     while True:
@@ -140,7 +159,9 @@ def main():
 
     sizes = threading.Thread(target=number_server, args=(config['sizes_host'], config['sizes_port'], 'S'))
     sizes.start()
-    
+
+    temperature = threading.Thread(target=file_source, args=(config['temperature_file'], 2, 'W'))
+    temperature.start()
 
     i2c = board.I2C()
     display = Seg14x4(i2c, address=config['address'])
@@ -166,7 +187,8 @@ def main():
             elif type(value) == float:
                 text = f'{key}{value:.2f}'
             else:
-                text = f'{key}{value}'
+                display_value = value.rjust(4) if '.' in value else value.rjust(3)
+                text = f'{key}{display_value}'
 
             display.print(text)
             time.sleep(3)
