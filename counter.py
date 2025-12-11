@@ -10,7 +10,8 @@ import re
 import socket
 
 counter_data = dict()
-counter_data['W'] = None
+counter_data['O'] = None
+counter_data['C'] = None
 counter_data['T'] = None
 counter_data['R'] = None
 counter_data['S'] = None
@@ -37,14 +38,16 @@ def space(path, dest):
 
         time.sleep(5)
 
-def int_file_source(file, dest):
+def int_file_source(file, trim, dest):
     while True:
         file_result = None
 
         try:
             if os.path.exists(file):
                 with open(file) as f:
-                    file_result = f.read().strip()
+                    file_result = f.readline().strip()
+                    if trim > 0:
+                        file_result = file_result[:(trim * -1)]
 
             counter_data[dest] = int(file_result)
         except:
@@ -143,7 +146,7 @@ def main():
     bagpuss = threading.Thread(target=space, args=(config['space_path'], 'B'))
     bagpuss.start()
 
-    tasks = threading.Thread(target=int_file_source, args=('task_count.txt', 'T'))
+    tasks = threading.Thread(target=int_file_source, args=('task_count.txt', 0, 'T'))
     tasks.start()
 
     freshrss = threading.Thread(target=int_url_source, args=(config['freshrss_url'], 'R'))
@@ -160,8 +163,11 @@ def main():
     sizes = threading.Thread(target=number_server, args=(config['sizes_host'], config['sizes_port'], 'S'))
     sizes.start()
 
-    temperature = threading.Thread(target=file_source, args=(config['temperature_file'], 2, 'W'))
+    temperature = threading.Thread(target=file_source, args=(config['temperature_file'], 2, 'O'))
     temperature.start()
+
+    co2 = threading.Thread(target=int_file_source, args=(config['co2_file'], 3, 'C'))
+    co2.start()
 
     i2c = board.I2C()
     display = Seg14x4(i2c, address=config['address'])

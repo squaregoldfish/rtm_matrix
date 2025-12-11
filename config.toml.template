@@ -18,4 +18,5 @@ sizes_host=''
 sizes_port=0
 freshrss_url=''
 temperature_file=''
+co2_file=''
 
