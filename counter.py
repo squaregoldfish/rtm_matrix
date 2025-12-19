@@ -14,10 +14,13 @@ counter_data['O'] = None
 counter_data['C'] = None
 counter_data['T'] = None
 counter_data['R'] = None
-counter_data['S'] = None
-counter_data['P'] = None
-counter_data['V'] = None
 counter_data['A'] = None
+counter_data['P'] = None
+counter_data['Y'] = None
+counter_data['S'] = None
+counter_data['W'] = None
+counter_data['N'] = None
+counter_data['G'] = None
 counter_data['B'] = None
 lock = threading.Lock()
 
@@ -109,9 +112,10 @@ def json_url_source(url, extract):
                         raise ValueError("Path entries must be either string (key) or int (index).")
 
                 with lock:
-                    match = re.search(r'\b\d+\b', current)
-                    if match:
-                        counter_data[dest]  = int(match.group())
+                    counter_data[dest] = current
+                    #match = re.search(r'\b\d+\b', current)
+                    #if match:
+                    #    counter_data[dest]  = int(match.group())
 
         except Exception as e:
             print(e)
@@ -137,6 +141,21 @@ def int_url_source(url, dest):
 
         time.sleep(60)
 
+def file_line_count(file, dest):
+    while True:
+        result = None
+
+        try:
+            with open(file, 'r') as f:
+                result = sum(1 for line in f)
+        except:
+            pass
+
+        with lock:
+            counter_data[dest] = result
+
+        time.sleep(60)
+
 def main():
     # Config
     with open('config.toml') as config_file:
@@ -153,14 +172,16 @@ def main():
     freshrss.start()
 
     media_extract = {
-        'P': ['frames', 0, 'text'],
-        'V': ['frames', 5, 'text'],
-        'A': ['frames', 10, 'text']
+        'P': ['Podcasts'],
+        'Y': ['YouTube'],
+        'S': ['Streams'],
+        'W': ['Readeck'],
+        'N': ['oldest_diff']
     }
     media = threading.Thread(target=json_url_source, args=(config['media_url'], media_extract))
     media.start()
 
-    sizes = threading.Thread(target=number_server, args=(config['sizes_host'], config['sizes_port'], 'S'))
+    sizes = threading.Thread(target=number_server, args=(config['sizes_host'], config['sizes_port'], 'A'))
     sizes.start()
 
     temperature = threading.Thread(target=file_source, args=(config['temperature_file'], 2, 'O'))
@@ -168,7 +189,10 @@ def main():
 
     co2 = threading.Thread(target=int_file_source, args=(config['co2_file'], 3, 'C'))
     co2.start()
-
+    
+    scr_count = threading.Thread(target=int_file_source, args=(config['dir_file'], 0, 'G'))
+    scr_count.start()
+    
     i2c = board.I2C()
     display = Seg14x4(i2c, address=config['address'])
     display.brightness = config['brightness']
