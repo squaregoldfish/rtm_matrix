@@ -8,10 +8,11 @@ import os
 import requests
 import re
 import socket
+import glob
 
 counter_data = dict()
-counter_data['O'] = None
-counter_data['C'] = None
+#counter_data['O'] = None
+#counter_data['C'] = None
 counter_data['T'] = None
 counter_data['R'] = None
 counter_data['A'] = None
@@ -19,8 +20,11 @@ counter_data['P'] = None
 counter_data['Y'] = None
 counter_data['S'] = None
 counter_data['W'] = None
+counter_data['D'] = None
 counter_data['N'] = None
-counter_data['G'] = None
+counter_data['E'] = None
+counter_data['V'] = None
+counter_data['I'] = None
 counter_data['B'] = None
 lock = threading.Lock()
 
@@ -156,6 +160,21 @@ def file_line_count(file, dest):
 
         time.sleep(60)
 
+def dir_file_count(directory, dest):
+    while True:
+        result = None
+
+        try:
+            result = len(glob.glob(os.path.join(directory, '**'), recursive=True))
+        except:
+            pass
+
+        with lock:
+            counter_data[dest] = result
+
+        time.sleep(60)
+
+
 def main():
     # Config
     with open('config.toml') as config_file:
@@ -176,6 +195,7 @@ def main():
         'Y': ['YouTube'],
         'S': ['Streams'],
         'W': ['Readeck'],
+        'D': ['oldest'],
         'N': ['oldest_diff']
     }
     media = threading.Thread(target=json_url_source, args=(config['media_url'], media_extract))
@@ -184,14 +204,22 @@ def main():
     sizes = threading.Thread(target=number_server, args=(config['sizes_host'], config['sizes_port'], 'A'))
     sizes.start()
 
-    temperature = threading.Thread(target=file_source, args=(config['temperature_file'], 2, 'O'))
-    temperature.start()
+    #temperature = threading.Thread(target=file_source, args=(config['temperature_file'], 2, 'O'))
+    #temperature.start()
 
-    co2 = threading.Thread(target=int_file_source, args=(config['co2_file'], 3, 'C'))
-    co2.start()
+    #co2 = threading.Thread(target=int_file_source, args=(config['co2_file'], 3, 'C'))
+    #co2.start()
     
-    scr_count = threading.Thread(target=int_file_source, args=(config['dir_file'], 0, 'G'))
+    scr_count = threading.Thread(target=int_file_source, args=(config['dir_file'], 0, 'E'))
     scr_count.start()
+
+    vid_count = threading.Thread(target=dir_file_count, args=(config['dir_count_1'], 'V'))
+    vid_count.start()
+
+    photo_count = threading.Thread(target=dir_file_count, args=(config['dir_count_2'], 'I'))
+    photo_count.start()
+
+
     
     i2c = board.I2C()
     display = Seg14x4(i2c, address=config['address'])
