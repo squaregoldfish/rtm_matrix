@@ -248,8 +248,9 @@ def main():
                 display_value = value.rjust(4) if '.' in value else value.rjust(3)
                 text = f'{key}{display_value}'
 
-            display.print(text)
-            time.sleep(3)
+            if not text.endswith('  0'):
+                display.print(text)
+                time.sleep(3)
 
 
 
