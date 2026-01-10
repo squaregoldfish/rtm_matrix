@@ -165,7 +165,7 @@ def dir_file_count(directory, dest):
         result = None
 
         try:
-            result = len(glob.glob(os.path.join(directory, '**'), recursive=True))
+            result = len(glob.glob(os.path.join(directory, '**'), recursive=True)) - 1
         except:
             pass
 
