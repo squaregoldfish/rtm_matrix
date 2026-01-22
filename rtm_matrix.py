@@ -149,7 +149,7 @@ def display_binary_tasks(matrix, count, start_row, color):
 
     for bit in range(8, 16):
         if 1 << bit & count:
-            matrix.set_pixel(start_row - 1, 7 - bit, color)
+            matrix.set_pixel(start_row - 1, 15 - bit, color)
 
 def get_row(number):
     return 7 - int(number / 8)
