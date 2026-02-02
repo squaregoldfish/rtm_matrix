@@ -1,23 +1,17 @@
+[matrix]
+address=116
+i2c_bus=1
+brightness=10
+
+[text]
+address=112
+i2c_bus=1
+brightness=0.4
+
 [rtm]
 api_key=''
 shared_secret=''
 token=''
 
-[matrix]
-address=116
-i2c_bus=1
-brightness=5
-
-[counter]
-address=112
-i2c_bus=1
-brightness=5
-space_path='/'
-media_url = ''
-sizes_host=''
-sizes_port=0
-freshrss_url=''
-temperature_file=''
-co2_file=''
-lines_file=''
-
+[counters]
+file='counters.json'

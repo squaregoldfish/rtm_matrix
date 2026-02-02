@@ -208,6 +208,7 @@ __marimo__/
 
 # Config
 config.toml
+counters.json
 
 # Data files
 task_count.txt
