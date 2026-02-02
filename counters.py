@@ -63,6 +63,7 @@ class Counters():
             response = requests.get(url)
             response.raise_for_status()
             cache_entry['response'] = response.text
+            cache_entry['last_get'] = datetime.now()
 
         return cache_entry['response']
 
