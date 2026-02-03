@@ -13,6 +13,6 @@ matrix = bcmatrix.bcmatrix(config['matrix'])
 text = text_display.text_display(config['text'])
 
 # RememberTheMilk
-#rtm = rtm.RTM(matrix, config['rtm'])
+rtm = rtm.RTM(matrix, config['rtm'])
 
 counters = counters.Counters(text, config['counters'])
