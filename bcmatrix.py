@@ -71,14 +71,23 @@ class bcmatrix():
         self._matrix.clear()
         self._matrix.write_display()
 
+    def clear(self):
+        if not self._animation_running():
+            self._matrix.clear()
+        else:
+            raise ValueError('Animation is active')
+
     def set_pixel(self, row, col, color):
         if not self._animation_running():
             self._matrix.set_pixel(row, col, color)
+        else:
+            raise ValueError('Animation is active')
 
     def write_display(self):
         if not self._animation_running():
             self._matrix.write_display()
-
+        else:
+            raise ValueError('Animation is active')
 
 if __name__ == "__main__":
     with open('config.toml') as config_file:

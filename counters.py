@@ -7,6 +7,7 @@ import shutil
 import socket
 from threading import Thread
 import time
+import traceback
 
 class Counters():
     DELAY = 3
@@ -39,8 +40,11 @@ class Counters():
         while True:
             for c in self._counters:
                 if c['last_get'] is None or (datetime.now() - c['last_get']).total_seconds() > c['delay']:
-                    c['text'] = getattr(self, '_' + c['method'])(*c['params'])
-                    c['last_get'] = datetime.now()
+                    try:
+                        c['text'] = getattr(self, '_' + c['method'])(*c['params'])
+                        c['last_get'] = datetime.now()
+                    except Exception as e:
+                        print(traceback.format_exc())
 
             time.sleep(1)
 

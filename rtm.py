@@ -17,8 +17,8 @@ from urllib3.util.retry import Retry
 
 class RTM():
     _RTM_URL = 'https://api.rememberthemilk.com/services/rest/?'
-    _RATE_LIMIT = 1
-    _RATE_LIMIT_BACKOFF = 1
+    _RATE_LIMIT = 50
+    _RATE_LIMIT_BACKOFF = 15
     _ALL_TASKS = '_all'
     _OVERDUE = -1
     _TODAY = 0
@@ -146,8 +146,6 @@ class RTM():
                     future += 1
 
             self._draw_tasks(overdue, today, future)
-
-            self._matrix.write_display()
             with open('task_count.txt', 'w') as count_file:
                 count_file.write(f'{overdue + today + future}')
 
@@ -217,12 +215,17 @@ class RTM():
         today_lines = self._calc_line_count(today)
         future_lines = self._calc_line_count(future)
 
+        self._matrix.clear()
+
         if overdue_lines + today_lines + future_lines > 8:
             self._display_binary_tasks(overdue, 7, BicolorMatrix8x8.RED)
             self._display_binary_tasks(today, 4, BicolorMatrix8x8.YELLOW)
             self._display_binary_tasks(future, 1, BicolorMatrix8x8.GREEN)
         else:
             self._display_simple_tasks(overdue, today, future)
+
+        self._matrix.write_display()
+
 
     def _midnight(self, date_object):
         return date_object.replace(hour=0, minute=0, second=0, microsecond=0)
