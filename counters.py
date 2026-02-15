@@ -17,6 +17,8 @@ class Counters():
         self._config = config
         self._url_cache = dict()
 
+        self._alerts = None
+
         with open(config['file']) as cin:
             self._counters = json.loads(cin.read())
 
@@ -27,12 +29,15 @@ class Counters():
         Thread(target=self._display_counters).start()
         Thread(target=self._retrieve_counters).start()
         
+    def register_alerts(self, alerts):
+        self._alerts = alerts
 
     def _display_counters(self):
         while True:
             for c in self._counters:
                 if c['text'] is not None:
-                    self._display.write(c['label'] + c['text'])
+                    if self._alerts is None or not self._alerts.showing_alert:
+                        self._display.write(c['label'] + c['text'])
                     time.sleep(self.DELAY)
         
 
@@ -98,6 +103,8 @@ class Counters():
         if os.path.exists(file):
             with open(file) as f:
                 file_result = f.readline().strip()
+                if file_result == '':
+                    file_result = None
 
         return Counters._format_number(file_result)
 

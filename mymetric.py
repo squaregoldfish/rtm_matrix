@@ -1,3 +1,4 @@
+import alerts
 import bcmatrix
 import counters
 import rtm
@@ -15,4 +16,13 @@ text = text_display.text_display(config['text'])
 # RememberTheMilk
 rtm = rtm.RTM(matrix, config['rtm'])
 
+# Counters
 counters = counters.Counters(text, config['counters'])
+
+# Alerts
+alerts = alerts.Alerts(config['alerts'], matrix, text)
+
+# Pass around shared objects
+rtm.register_alerts(alerts)
+counters.register_alerts(alerts)
+alerts.register_rtm(rtm)

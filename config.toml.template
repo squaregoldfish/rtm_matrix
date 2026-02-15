@@ -15,3 +15,7 @@ token=''
 
 [counters]
 file='counters.json'
+
+[alerts]
+port=
+button_pin=10

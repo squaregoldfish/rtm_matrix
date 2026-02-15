@@ -40,14 +40,19 @@ class RTM():
         self._last_request_status = None
         self._processing_error = False
 
+        self._alerts = None
+
         Thread(target=self._run, ).start()
 
     def _run(self):
         while True:
             self._fetch_tasks()
-            self.display_tasks()
-
+            if self._alerts is None or not self._alerts.showing_alert:
+                self.display_tasks()
             time.sleep(60)
+
+    def register_alerts(self, alerts):
+        self._alerts = alerts
 
     def _request(self, method, params):
         if self._last_request is not None and (datetime.now() - self._last_request).seconds < self._RATE_LIMIT:
@@ -204,7 +209,7 @@ class RTM():
 
         for i in range(future):
             current_pos += 1
-            self._matrix.set_pixel(get_row(current_pos), get_col(current_pos), BicolorMatrix8x8.GREEN)
+            self._matrix.set_pixel(self._get_row(current_pos), self._get_col(current_pos), BicolorMatrix8x8.GREEN)
 
     @staticmethod
     def _calc_line_count(count):
