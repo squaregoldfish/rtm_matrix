@@ -1,5 +1,6 @@
 from datetime import datetime
 import glob
+import imaplib
 import json
 import os
 import requests
@@ -176,4 +177,29 @@ class Counters():
             pass
 
         return Counters._format_number(int(result))
+
+    @staticmethod
+    def _unread_email(server, email, password):
+        # Connect to the IMAP server
+        mail = imaplib.IMAP4_SSL(server)
+        
+        # Log in to your account
+        mail.login(email, password)
+
+        # Select the mailbox you want to check (default is 'Inbox')
+        mail.select('inbox')
+
+        # Search for unread emails
+        result, data = mail.search(None, 'UNSEEN')
+
+        # Get the list of email IDs
+        email_ids = data[0].split()
+        
+        # Count of unread emails
+        unread_count = len(email_ids)
+
+        # Logout from the server
+        mail.logout()
+
+        return Counters._format_number(int(unread_count))
 
