@@ -1,5 +1,6 @@
 from Adafruit_LED_Backpack import BicolorMatrix8x8
 import board
+from datetime import datetime
 import digitalio
 import queue
 import socket
@@ -11,12 +12,15 @@ class Alerts():
     RED = 'RED'
     YELLOW = 'YEL'
     GREEN = 'GRN'
+
+    ALERT_TIMEOUT = 21600
     
     def __init__(self, config, matrix, text):
         self._matrix = matrix
         self._text = text
         self._queue = queue.Queue()
         self.showing_alert = False
+        self.current_alert_time = None
         self._rtm = None
 
         # Initialise push button
@@ -35,6 +39,7 @@ class Alerts():
             self._matrix.stop_animation()
             self._text.dots(4)
             self.showing_alert = False
+            self.current_alert_time = None
             if not self._queue.empty():
                 self._show_next_alert()
             else:
@@ -46,6 +51,9 @@ class Alerts():
         while True:
             if self._button.value:
                 self._button_push()
+            elif self.current_alert_time is not None and (datetime.now() - self.current_alert_time).total_seconds() > self.ALERT_TIMEOUT:
+                self._button_push()
+
             time.sleep(0.1)
 
 
@@ -70,18 +78,28 @@ class Alerts():
                     elif len(message) == 0:
                         response = f'Empty message'
                     else:
-                        self._queue.put([self._get_matrix_color(color), message])
+                        self._queue.put([self._get_matrix_color(color), message, datetime.now()])
                         self._show_next_alert()
 
                     conn.sendall(response.encode('utf-8'))
 
     def _show_next_alert(self):
-        if not self.showing_alert and not self._queue.empty():
-            color, message = self._queue.get()
-            self._matrix.start_animation(color)
-            self._text.write(message)
+        if not self.showing_alert:
+            done = False
 
-            self.showing_alert = True
+            while not done:
+                if self._queue.empty():
+                    done = True
+                else:
+                    color, message, alert_time = self._queue.get()
+                    if (datetime.now() - alert_time).total_seconds() < self.ALERT_TIMEOUT:
+                        self._matrix.start_animation(color)
+                        self._text.write(message)
+
+                        self.showing_alert = True
+                        self.current_alert_time = alert_time
+                        done = True
+
 
     def _get_matrix_color(self, color):
         if color == self.RED:
