@@ -19,3 +19,6 @@ file='counters.json'
 [alerts]
 port=
 button_pin=10
+
+[uptime_robot]
+api_key=

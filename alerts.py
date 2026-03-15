@@ -13,7 +13,7 @@ class Alerts():
     YELLOW = 'YEL'
     GREEN = 'GRN'
 
-    ALERT_TIMEOUT = 21600
+    ALERT_TIMEOUT = 43200
     
     def __init__(self, config, matrix, text):
         self._matrix = matrix
