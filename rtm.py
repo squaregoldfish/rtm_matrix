@@ -169,8 +169,8 @@ class RTM():
         print(self._last_request_status)
         hundreds = int(self._last_request_status / 100)
         rest = self._last_request_status % 100
-        self._display_vertical_binary(self._matrix, 1, hundreds, BicolorMatrix8x8.YELLOW)
-        self._display_vertical_binary(self._matrix, 0, rest, BicolorMatrix8x8.YELLOW)
+        self._display_vertical_binary(1, hundreds, BicolorMatrix8x8.YELLOW)
+        self._display_vertical_binary(0, rest, BicolorMatrix8x8.YELLOW)
 
     def _display_binary_tasks(self, count, start_row, color):
         for bit in range(8):
