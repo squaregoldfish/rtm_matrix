@@ -18,7 +18,7 @@ server_color = None
 
 if args.color == 'r':
     server_color = Alerts.RED
-elif server_color == 'g':
+elif args.color == 'g':
     server_color = Alerts.GREEN
 else:
     server_color = Alerts.YELLOW
