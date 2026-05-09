@@ -115,7 +115,8 @@ class Counters():
         try:
             result = int(self._get_url(url))
         except:
-            pass
+            print(traceback.format_exc())
+
 
         return Counters._format_number(result)
 
@@ -129,7 +130,7 @@ class Counters():
                 data = client_socket.recv(1024)
                 result = int(data)
         except:
-            pass
+            print(traceback.format_exc())
 
         return Counters._format_number(result)
 
@@ -141,7 +142,7 @@ class Counters():
             response = json.loads(self._get_url(url))
             result = response[key]
         except:
-            pass
+            print(traceback.format_exc())
     
         return Counters._format_number(result)
 
@@ -160,7 +161,7 @@ class Counters():
         try:
             result = len(glob.glob(os.path.join(path, '**'), recursive=True)) - 1
         except:
-            pass
+            print(traceback.format_exc())
 
         return Counters._format_number(result)
         
@@ -174,7 +175,7 @@ class Counters():
             if result > 1000:
                 result = result / 1000
         except:
-            pass
+            print(traceback.format_exc())
 
         return Counters._format_number(int(result))
 
