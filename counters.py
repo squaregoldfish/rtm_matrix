@@ -38,7 +38,7 @@ class Counters():
             for c in self._counters:
                 if c['text'] is not None:
                     if self._alerts is None or not self._alerts.showing_alert:
-                        self._display.write(c['label'] + c['text'])
+                        self._display.write(c['label'] + str(c['text']))
                     time.sleep(self.DELAY)
         
 
