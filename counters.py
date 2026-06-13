@@ -140,8 +140,6 @@ class Counters():
     def _number_json_url_source(self, url, key, headers=None, transient=False):
         result = None
 
-        print(transient)
-
         try:
             response = json.loads(self._get_url(url, headers))
             
