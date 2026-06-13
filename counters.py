@@ -54,7 +54,7 @@ class Counters():
 
             time.sleep(1)
 
-    def _get_url(self, url):
+    def _get_url(self, url, headers=None):
         if url not in self._url_cache.keys():
             # Find the URL's minimum delay
             min_delay = 999999999
@@ -69,8 +69,10 @@ class Counters():
             }
 
         cache_entry = self._url_cache[url]
-        if cache_entry['last_get'] is None or (datetime.now() - cache_entry['last_get']).total_seconds() > cache_entry['delay']:
-            response = requests.get(url)
+        if cache_entry['last_get'] is None \
+            or (datetime.now() - cache_entry['last_get']).total_seconds() > cache_entry['delay']:
+            
+            response = requests.get(url, headers=headers)
             response.raise_for_status()
             cache_entry['response'] = response.text
             cache_entry['last_get'] = datetime.now()
@@ -135,13 +137,26 @@ class Counters():
         return Counters._format_number(result)
 
 
-    def _number_json_url_source(self, url, key):
+    def _number_json_url_source(self, url, key, headers=None, transient=False):
         result = None
 
+        print(transient)
+
         try:
-            response = json.loads(self._get_url(url))
-            result = response[key]
-        except:
+            response = json.loads(self._get_url(url, headers))
+            
+            key_elements = key.split('/')
+            for key in key_elements:
+                response = response[key]
+
+            result = response
+        except requests.exceptions.ConnectionError as e:
+            if transient:
+                # We expect that the server won't always be around
+                pass
+            else:
+                print(traceback.format_exc())
+        except Exception as e:
             print(traceback.format_exc())
     
         return Counters._format_number(result)
